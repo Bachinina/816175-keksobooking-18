@@ -59,7 +59,7 @@ var generateRandomArray = function (arr) {
   return randomArray;
 };
 
-// Генерация аваторов
+// Генерация аватаров
 var generateUserAvatars = function (quantity) {
   var userAvatars = [];
 
@@ -82,6 +82,7 @@ var computeAddress = function () {
   };
 };
 
+// Генерация объявлений
 var generateAds = function (quantity) {
   var adsArray = [];
   var avatars = generateUserAvatars(quantity);
