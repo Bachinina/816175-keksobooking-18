@@ -51,8 +51,7 @@ var generateRandomArray = function (arr) {
       var randomElement = selectRandomElement(arr);
       if (randomArray.indexOf(randomElement) !== -1) {
         i--;
-      }
-      else {
+      } else {
         randomArray[i] = randomElement;
       }
     }
