@@ -136,11 +136,11 @@ var renderAd = function (element) {
 };
 
 // Добавление объявлений в разметку
-var renderAds = function (ads) {
+var renderAds = function (arr) {
   var fragment = document.createDocumentFragment();
 
-  for (var i = 0; i < ads.length; i++) {
-    fragment.appendChild(renderAd(ads[i]));
+  for (var i = 0; i < arr.length; i++) {
+    fragment.appendChild(renderAd(arr[i]));
   }
   return mapPinsBlock.appendChild(fragment);
 };
@@ -205,9 +205,9 @@ var renderCard = function (element) {
 };
 
 // Добавление карточки с подробностями объявления
-var renderCards = function (ads) {
+var renderCards = function (arr) {
   var fragment = document.createDocumentFragment();
-  fragment.appendChild(renderCard(ads[0]));
+  fragment.appendChild(renderCard(arr[0]));
 
   return map.insertBefore(fragment, filter);
 };
