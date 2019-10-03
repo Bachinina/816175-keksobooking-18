@@ -1,13 +1,13 @@
 'use strict';
 
 var map = document.querySelector('.map');
-map.classList.remove('map--faded');
 var mapPinsBlock = document.querySelector('.map__pins');
-var filter = document.querySelector('.map__filters-container');
+var filterContainer = document.querySelector('.map__filters-container');
 
 var adTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
 var cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
 
+var ENTER_KEYCODE = 13;
 
 var TYPES = ['palace', 'flat', 'house', 'bungalo'];
 var CHECKIN = ['12:00', '13:00', '14:00'];
@@ -120,9 +120,6 @@ var generateAds = function (quantity) {
   return adsArray;
 };
 
-
-var ads = generateAds(ADS_AMOUNT);
-
 // Отрисовка объявления по шаблону
 var renderAd = function (element) {
   var ad = adTemplate.cloneNode(true);
@@ -209,8 +206,74 @@ var renderCards = function (arr) {
   var fragment = document.createDocumentFragment();
   fragment.appendChild(renderCard(arr[0]));
 
-  return map.insertBefore(fragment, filter);
+  return map.insertBefore(fragment, filterContainer);
 };
 
+
+// Генерация и отрисовка объявлений на карте
+var ads = generateAds(ADS_AMOUNT);
 renderAds(ads);
 renderCards(ads);
+
+
+// Деактивация элементов
+var disableElements = function (arr, boolean) {
+  if (boolean === true) {
+    for (var i = 0; i < arr.length; i++) {
+      arr[i].setAttribute('disabled', true);
+    }
+  }
+  if (boolean === false) {
+    for (var j = 0; j < arr.length; j++) {
+      arr[j].removeAttribute('disabled');
+    }
+  }
+};
+
+// Деактивация страницы
+var adForm = document.querySelector('.ad-form');
+var formsFieldsets = document.querySelectorAll('fieldset');
+var filtersSelects = filterContainer.querySelectorAll('select');
+
+var disablePage = function (boolean) {
+  if (boolean) {
+    map.classList.add('map--faded');
+    adForm.classList.add('ad-form--disabled');
+  } else {
+    map.classList.remove('map--faded');
+    adForm.classList.remove('ad-form--disabled');
+  }
+
+  disableElements(formsFieldsets, boolean);
+  disableElements(filtersSelects, boolean);
+};
+
+// Вызов функции деактивации при загрузке страницы
+disablePage(true);
+
+
+// Активация страницы
+var mapPinMain = document.querySelector('.map__pin--main');
+var addressInput = document.querySelector('input[name="address"]');
+
+var setElementsCoords = function (element) {
+  var coordX = Math.floor(element.offsetLeft - element.offsetWidth / 2);
+  var coordY = Math.floor(element.offsetTop - element.offsetHeight);
+  addressInput.value = coordX + ', ' + coordY;
+};
+
+mapPinMain.addEventListener('mousedown', function () {
+  disablePage(false);
+  setElementsCoords(mapPinMain);
+});
+
+mapPinMain.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ENTER_KEYCODE) {
+    disablePage(false);
+  }
+});
+
+// Валидация
+// var roomNumber = document.querySelector('#room_number');
+// var capacity = document.querySelector('#capacity');
+
