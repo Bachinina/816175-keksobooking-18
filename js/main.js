@@ -199,7 +199,6 @@ var renderCards = function (arr) {
 var ads = generateAds(ADS_AMOUNT);
 
 
-
 // Деактивация элементов
 var disableElements = function (arr, boolean) {
   if (boolean === true) {
