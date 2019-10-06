@@ -1,5 +1,6 @@
 'use strict';
 
+var ESC_KEYCODE = 27;
 var ENTER_KEYCODE = 13;
 
 var TYPES = ['palace', 'flat', 'house', 'bungalo'];
@@ -122,6 +123,38 @@ var renderAd = function (element) {
   ad.querySelector('img').src = element.author.avatar;
   ad.querySelector('img').alt = element.offer.title;
 
+  // Добавление обработчиков событий
+  var onCardEscPress = function (evt) {
+    if (evt.keyCode === ESC_KEYCODE) {
+      closeCard();
+    }
+  };
+
+  // Открыть карточку: удалить предыдущую, если она есть; отрисовать новую
+  var openCard = function () {
+    removeActiveCard();
+    showCard(element);
+    // При нажатии на ESC закрыть карточку
+    document.addEventListener('keydown', onCardEscPress);
+  };
+
+  // Закрыть карточку: удалить текущую
+  var closeCard = function () {
+    removeActiveCard();
+    // Удаление обработчика нажатия на ESC
+    document.removeEventListener('keydown', onCardEscPress);
+  };
+
+  // Открытие карточки
+  ad.addEventListener('click', function () {
+    openCard();
+  });
+  ad.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === ENTER_KEYCODE) {
+      openCard();
+    }
+  });
+
   return ad;
 };
 
@@ -187,10 +220,22 @@ var renderCard = function (element) {
   return card;
 };
 
-// Добавление карточки с подробностями объявления
-var renderCards = function (arr) {
+// Добавление в разметку карточки с подробностями объявления
+var showCard = function (element) {
   var fragment = document.createDocumentFragment();
-  fragment.appendChild(renderCard(arr[0]));
+  fragment.appendChild(renderCard(element));
+
+  // Добавление обработчика событий (закрытие карточки при клике на крестик)
+  var cardCloseButton = fragment.querySelector('.popup__close');
+
+  cardCloseButton.addEventListener('click', function () {
+    removeActiveCard();
+  });
+  cardCloseButton.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === ENTER_KEYCODE) {
+      removeActiveCard();
+    }
+  });
 
   return map.insertBefore(fragment, filterContainer);
 };
@@ -256,7 +301,6 @@ var disablePage = function (boolean) {
     adForm.classList.remove('ad-form--disabled');
     // Отрисовка объявлений после активации страницы
     renderAds(ads);
-    renderCards(ads);
   }
 
   disableElements(formsFieldsets, boolean);
@@ -269,7 +313,7 @@ disablePage(true);
 
 // Активация страницы
 var mapPinMain = document.querySelector('.map__pin--main');
-var addressInput = document.querySelector('input[name="address"]');
+var addressInput = document.querySelector('#address');
 
 var setElementsCoords = function (element) {
   var coordX = Math.floor(element.offsetLeft - element.offsetWidth / 2);
@@ -289,6 +333,7 @@ mapPinMain.addEventListener('keydown', function (evt) {
 });
 
 // Валидация
+// Соответствие количества комнат количеству гостей
 var roomNumber = document.querySelector('#room_number');
 var capacity = document.querySelector('#capacity');
 
@@ -324,3 +369,78 @@ var onRoomNumberInput = function (evt) {
 };
 
 roomNumber.addEventListener('input', onRoomNumberInput);
+
+// Заголовок объявления
+var title = document.querySelector('#title');
+title.addEventListener('invalid', function () {
+  if (title.validity.tooShort) {
+    title.setCustomValidity('Слишком короткий заголовок :(');
+  } else if (title.validity.tooLong) {
+    title.setCustomValidity('Краткость-сестра таланта! Поменьше слов!');
+  } else if (title.validity.valueMissing) {
+    title.setCustomValidity('Как же без названия? :(');
+  } else {
+    title.setCustomValidity('');
+  }
+});
+
+// Цена
+var price = document.querySelector('#price');
+price.addEventListener('invalid', function () {
+  if (price.validity.rangeOverflow) {
+    price.setCustomValidity('Не жадничай. Дороговато');
+  } else if (price.validity.rangeUnderflow) {
+    price.setCustomValidity('Слишком дёшево за такое предложение');
+  } else if (price.validity.valueMissing) {
+    price.setCustomValidity('Благотворитетельность - это хорошо, но хоть немного денег придётся взять');
+  } else {
+    price.setCustomValidity('');
+  }
+});
+
+// Соответствие типа жилья и минимальной цены
+var type = document.querySelector('#type');
+var accordanceOfHousingTypeAndMinPrice = {
+  flat: '1000',
+  bungalo: '0',
+  house: '5000',
+  palace: '10000'
+};
+
+var onHousingTypeInput = function (evt) {
+  var selectedType = evt.target.value;
+  var minPrice = parseInt(accordanceOfHousingTypeAndMinPrice[selectedType], 10);
+
+  price.setAttribute('min', minPrice);
+  price.setAttribute('placeholder', minPrice);
+};
+
+type.addEventListener('click', onHousingTypeInput);
+
+// Соответствие времение заезда и выезда
+var timeIn = document.querySelector('#timein');
+var timeOut = document.querySelector('#timeout');
+
+var onTimeInAndOutInput = function (evt) {
+  resetAllValues(timeIn.options);
+  resetAllValues(timeOut.options);
+
+  var selectedTime = evt.target.value;
+
+  var correlateTimeInAndTimeOut = function (arr) {
+    for (var i = 0; i < arr.length; i++) {
+      if (arr[i].value === selectedTime) {
+        arr[i].selected = true;
+      }
+    }
+  };
+
+  if (evt.target === timeIn) {
+    correlateTimeInAndTimeOut(timeOut.options);
+  } else {
+    correlateTimeInAndTimeOut(timeIn.options);
+  }
+};
+
+timeIn.addEventListener('input', onTimeInAndOutInput);
+timeOut.addEventListener('input', onTimeInAndOutInput);
