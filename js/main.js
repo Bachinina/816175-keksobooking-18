@@ -198,6 +198,27 @@ var renderCards = function (arr) {
 // Генерация заданного количества объявлений
 var ads = generateAds(ADS_AMOUNT);
 
+// Удаление объявлений и активной карточки
+var removeAds = function () {
+  // Находим все пины на странице
+  var activeAds = mapPinsBlock.querySelectorAll('.map__pin');
+
+  // Находим активную карточку
+  var activeCard = map.querySelector('.map__card');
+
+  // Удаляем пины, начиная со второго, т.к. первый - главный пин для активации страницы
+  if (activeAds.length > 1) {
+    for (var i = 1; i < activeAds.length; i++) {
+      mapPinsBlock.removeChild(activeAds[i]);
+    }
+  }
+
+  // Проверяем, есть ли карточка на странице, если да - удаляем
+  if (activeCard !== null) {
+    map.removeChild(activeCard);
+  }
+};
+
 
 // Деактивация элементов
 var disableElements = function (arr, boolean) {
@@ -223,6 +244,7 @@ var disablePage = function (boolean) {
     map.classList.add('map--faded');
     adForm.classList.add('ad-form--disabled');
     // Удаление объявлений и активной карточки
+    removeAds();
 
   } else {
     map.classList.remove('map--faded');
