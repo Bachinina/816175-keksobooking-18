@@ -1,10 +1,8 @@
 'use strict';
 
-// Работа карты: активация/деактивация, отрисовка и поведение пинов и карточек
+// Работа карты: отрисовка и поведение пинов и карточек
 
 (function () {
-  // Количество объявлений, которое нужно отрисовать
-  var ADS_AMOUNT = 8;
   // Высота метки главного пина (для правильного вычисления его координат)
   var HEIGHT_OF_THE_TIP = 22;
 
@@ -23,8 +21,8 @@
   var adTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
   var cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
 
-  // Генерация объявлений
-  var ads = window.ads.generateAds(ADS_AMOUNT);
+  var mapPinMain = document.querySelector('.map__pin--main');
+  var addressInput = document.querySelector('#address');
 
 
   // Отрисовка объявления по шаблону
@@ -43,15 +41,15 @@
 
     // Открыть карточку: удалить предыдущую, если она есть; отрисовать новую
     var openCard = function () {
-      removeActiveCard();
-      showCard(element);
+      window.map.removeActiveCard();
+      window.map.showCard(element);
       // При нажатии на ESC закрыть карточку
       document.addEventListener('keydown', onCardEscPress);
     };
 
     // Закрыть карточку: удалить текущую
     var closeCard = function () {
-      removeActiveCard();
+      window.map.removeActiveCard();
       // Удаление обработчика нажатия на ESC
       document.removeEventListener('keydown', onCardEscPress);
     };
@@ -67,15 +65,6 @@
     return ad;
   };
 
-  // Добавление объявлений в разметку
-  var renderAds = function (arr) {
-    var fragment = document.createDocumentFragment();
-
-    for (var i = 0; i < arr.length; i++) {
-      fragment.appendChild(renderAd(arr[i]));
-    }
-    return mapPinsBlock.appendChild(fragment);
-  };
 
   // Добавление удобств жилья
   var addFeaturesOfHabitation = function (arr) {
@@ -122,90 +111,65 @@
     return card;
   };
 
-  // Добавление в разметку карточки с подробностями объявления
-  var showCard = function (element) {
-    var fragment = document.createDocumentFragment();
-    fragment.appendChild(renderCard(element));
 
-    // Добавление обработчика событий (закрытие карточки при клике на крестик)
-    var cardCloseButton = fragment.querySelector('.popup__close');
+  window.map = {
+    // Добавление объявлений в разметку
+    renderAds: function (arr) {
+      var fragment = document.createDocumentFragment();
 
-    cardCloseButton.addEventListener('click', function () {
-      removeActiveCard();
-    });
-    cardCloseButton.addEventListener('keydown', function (evt) {
-      window.utils.isEnterKeyCode(evt, removeActiveCard);
-    });
-
-    return map.insertBefore(fragment, filterContainer);
-  };
-
-  // Удаление активных пинов
-  var removeActivePins = function () {
-    // Находим все пины на странице
-    var activeAds = mapPinsBlock.querySelectorAll('.map__pin');
-
-    // Удаляем пины, начиная со второго, т.к. первый - главный пин для активации страницы
-    if (activeAds.length > 1) {
-      for (var i = 1; i < activeAds.length; i++) {
-        mapPinsBlock.removeChild(activeAds[i]);
+      for (var i = 0; i < arr.length; i++) {
+        fragment.appendChild(renderAd(arr[i]));
       }
-    }
+      return mapPinsBlock.appendChild(fragment);
+    },
+
+    // Добавление в разметку карточки с подробностями объявления
+    showCard: function (element) {
+      var fragment = document.createDocumentFragment();
+      fragment.appendChild(renderCard(element));
+
+      // Добавление обработчика событий (закрытие карточки при клике на крестик)
+      var cardCloseButton = fragment.querySelector('.popup__close');
+
+      cardCloseButton.addEventListener('click', function () {
+        window.map.removeActiveCard();
+      });
+      cardCloseButton.addEventListener('keydown', function (evt) {
+        window.utils.isEnterKeyCode(evt, window.map.removeActiveCard);
+      });
+
+      return map.insertBefore(fragment, filterContainer);
+    },
+
+    // Удаление активных пинов (объявлений)
+    removeActivePins: function () {
+      // Находим все пины на странице
+      var activeAds = mapPinsBlock.querySelectorAll('.map__pin');
+
+      // Удаляем пины, начиная со второго, т.к. первый - главный пин для активации страницы
+      if (activeAds.length > 1) {
+        for (var i = 1; i < activeAds.length; i++) {
+          mapPinsBlock.removeChild(activeAds[i]);
+        }
+      }
+    },
+
+    // Удаление активной карточки
+    removeActiveCard: function () {
+      // Находим активную карточку
+      var activeCard = map.querySelector('.map__card');
+
+      // Проверяем, есть ли карточка на странице, если да - удаляем
+      if (activeCard !== null) {
+        map.removeChild(activeCard);
+      }
+    },
+
+    // Расчет координат главного пина
+    setMapMainPinCoords: function () {
+      var coordX = Math.floor(mapPinMain.offsetLeft - mapPinMain.offsetWidth / 2);
+      var coordY = Math.floor(mapPinMain.offsetTop - mapPinMain.offsetHeight - HEIGHT_OF_THE_TIP);
+      addressInput.value = coordX + ', ' + coordY;
+    },
   };
-
-
-  // Удаление активной карточки
-  var removeActiveCard = function () {
-    // Находим активную карточку
-    var activeCard = map.querySelector('.map__card');
-
-    // Проверяем, есть ли карточка на странице, если да - удаляем
-    if (activeCard !== null) {
-      map.removeChild(activeCard);
-    }
-  };
-
-  // Деактивация страницы
-  var adForm = document.querySelector('.ad-form');
-  var formsFieldsets = document.querySelectorAll('fieldset');
-
-  var disablePage = function (boolean) {
-    if (boolean) {
-      map.classList.add('map--faded');
-      adForm.classList.add('ad-form--disabled');
-      // Удаление объявлений и активной карточки
-      removeActivePins();
-      removeActiveCard();
-    } else {
-      map.classList.remove('map--faded');
-      adForm.classList.remove('ad-form--disabled');
-      // Отрисовка объявлений после активации страницы
-      renderAds(ads);
-    }
-
-    window.utils.disableElements(formsFieldsets, boolean);
-  };
-
-
-  // Активация страницы
-  var mapPinMain = document.querySelector('.map__pin--main');
-  var addressInput = document.querySelector('#address');
-
-  var setElementsCoords = function (element) {
-    var coordX = Math.floor(element.offsetLeft - element.offsetWidth / 2);
-    var coordY = Math.floor(element.offsetTop - element.offsetHeight - HEIGHT_OF_THE_TIP);
-    addressInput.value = coordX + ', ' + coordY;
-  };
-
-  mapPinMain.addEventListener('mousedown', function () {
-    disablePage(false);
-    setElementsCoords(mapPinMain);
-  });
-
-  mapPinMain.addEventListener('keydown', function (evt) {
-    window.utils.isEnterKeyCode(evt, disablePage(false));
-  });
-
-  // Вызов функции деактивации при загрузке страницы
-  disablePage(true);
 })();
