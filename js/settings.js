@@ -27,7 +27,7 @@
       map.classList.remove('map--faded');
       adForm.classList.remove('ad-form--disabled');
       // Отрисовка объявлений после активации страницы
-      window.map.renderAds(ads);
+      window.map.renderPins(ads);
     }
 
     window.utils.disableElements(formsFieldsets, boolean);

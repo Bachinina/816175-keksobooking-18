@@ -18,7 +18,7 @@
   var mapPinsBlock = document.querySelector('.map__pins');
   var filterContainer = document.querySelector('.map__filters-container');
 
-  var adTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
+  var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
   var cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
 
   var mapPinMain = document.querySelector('.map__pin--main');
@@ -27,12 +27,12 @@
 
   // Отрисовка объявления по шаблону
   var renderAd = function (element) {
-    var ad = adTemplate.cloneNode(true);
+    var pin = pinTemplate.cloneNode(true);
 
-    ad.style.left = element.location.x - ad.offsetWidth / 2 + 'px';
-    ad.style.top = element.location.y - ad.offsetHeight + 'px';
-    ad.querySelector('img').src = element.author.avatar;
-    ad.querySelector('img').alt = element.offer.title;
+    pin.style.left = element.location.x - pin.offsetWidth / 2 + 'px';
+    pin.style.top = element.location.y - pin.offsetHeight + 'px';
+    pin.querySelector('img').src = element.author.avatar;
+    pin.querySelector('img').alt = element.offer.title;
 
     // Добавление обработчиков событий
     var onCardEscPress = function (evt) {
@@ -55,14 +55,14 @@
     };
 
     // Открытие карточки
-    ad.addEventListener('click', function () {
+    pin.addEventListener('click', function () {
       openCard();
     });
-    ad.addEventListener('keydown', function (evt) {
+    pin.addEventListener('keydown', function (evt) {
       window.utils.isEnterKeyCode(evt, openCard);
     });
 
-    return ad;
+    return pin;
   };
 
 
@@ -113,8 +113,8 @@
 
 
   window.map = {
-    // Добавление объявлений в разметку
-    renderAds: function (arr) {
+    // Добавление пинов в разметку
+    renderPins: function (arr) {
       var fragment = document.createDocumentFragment();
 
       for (var i = 0; i < arr.length; i++) {
