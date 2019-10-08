@@ -47,6 +47,13 @@
   };
 
   window.ads = {
+    coords: {
+      xMin: X_COORDS_MIN,
+      xMax: X_COORDS_MAX,
+      yMin: Y_COORDS_MIN,
+      yMax: Y_COORDS_MAX,
+    },
+
     // Генерация объявлений
     generateAds: function (quantity) {
       var adsArray = [];

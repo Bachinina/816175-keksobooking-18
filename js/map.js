@@ -96,21 +96,12 @@
     var cardPhotoTemplate = card.querySelector('.popup__photo');
 
     card.querySelector('.popup__title').textContent = element.offer.title;
-    card.querySelector('.popup__text--address').textContent =
-      element.offer.address;
-    card.querySelector('.popup__text--price ').textContent =
-      element.offer.price + '₽/ночь';
-    card.querySelector('.popup__type').textContent =
-      typeOfHabitation[element.offer.type];
-    card.querySelector('.popup__text--capacity').textContent =
-      element.offer.rooms + ' комнаты для ' + element.offer.guests + ' гостей';
-    card.querySelector('.popup__text--time').textContent =
-      ' Заезд после ' +
-      element.offer.checkin +
-      ', выезд до ' +
-      element.offer.checkout;
-    card.querySelector('.popup__description').textContent =
-      element.offer.description;
+    card.querySelector('.popup__text--address').textContent = element.offer.address;
+    card.querySelector('.popup__text--price ').textContent = element.offer.price + '₽/ночь';
+    card.querySelector('.popup__type').textContent = typeOfHabitation[element.offer.type];
+    card.querySelector('.popup__text--capacity').textContent = element.offer.rooms + ' комнаты для ' + element.offer.guests + ' гостей';
+    card.querySelector('.popup__text--time').textContent = ' Заезд после ' + element.offer.checkin + ', выезд до ' + element.offer.checkout;
+    card.querySelector('.popup__description').textContent = element.offer.description;
     card.querySelector('.popup__avatar').src = element.author.avatar;
 
     // Удобства жилья
