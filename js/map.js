@@ -111,6 +111,67 @@
     return card;
   };
 
+  // Перемещение главного пина на карте
+  var onmapPinMainMousedown = function (evt) {
+    evt.preventDefault();
+
+    var startCoords = {
+      x: evt.clientX,
+      y: evt.clientY
+    };
+
+    var flag = false;
+
+    var onmapPinMainMousemove = function (moveEvt) {
+      moveEvt.preventDefault();
+
+      flag = true;
+
+      var shift = {
+        x: startCoords.x - moveEvt.clientX,
+        y: startCoords.y - moveEvt.clientY
+      };
+
+      startCoords = {
+        x: moveEvt.clientX,
+        y: moveEvt.clientY
+      };
+
+      var currentX = mapPinMain.offsetLeft - shift.x;
+      var currentY = mapPinMain.offsetTop - shift.y;
+
+      if (currentX >= window.ads.coords.xMin - mapPinMain.offsetWidth / 2 && currentX <= window.ads.coords.xMax - mapPinMain.offsetWidth / 2) {
+        mapPinMain.style.left = currentX + 'px';
+      }
+      if (currentY >= window.ads.coords.yMin && currentY <= window.ads.coords.yMax) {
+        mapPinMain.style.top = currentY + 'px';
+      }
+      window.map.setMapMainPinCoords();
+
+    };
+
+    var onmapPinMainMouseup = function (upEvt) {
+      upEvt.preventDefault();
+      document.removeEventListener('mousemove', onmapPinMainMousemove);
+      document.removeEventListener('mouseup', onmapPinMainMouseup);
+
+      var onmapPinMainClickPreventDefault = function (evtDef) {
+        evtDef.preventDefault();
+        mapPinMain.removeEventListener('click', onmapPinMainClickPreventDefault);
+      };
+
+      if (flag) {
+        onmapPinMainClickPreventDefault();
+        mapPinMain.addEventListener('click', onmapPinMainClickPreventDefault);
+      }
+    };
+
+    document.addEventListener('mousemove', onmapPinMainMousemove);
+    document.addEventListener('mouseup', onmapPinMainMouseup);
+  };
+
+  mapPinMain.addEventListener('mousedown', onmapPinMainMousedown);
+
 
   window.map = {
     // Добавление пинов в разметку
@@ -167,8 +228,8 @@
 
     // Расчет координат главного пина
     setMapMainPinCoords: function () {
-      var coordX = Math.floor(mapPinMain.offsetLeft - mapPinMain.offsetWidth / 2);
-      var coordY = Math.floor(mapPinMain.offsetTop - mapPinMain.offsetHeight - HEIGHT_OF_THE_TIP);
+      var coordX = Math.floor(mapPinMain.offsetLeft + mapPinMain.offsetWidth / 2);
+      var coordY = Math.floor(mapPinMain.offsetTop + mapPinMain.offsetHeight + HEIGHT_OF_THE_TIP);
       addressInput.value = coordX + ', ' + coordY;
     },
   };
