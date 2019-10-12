@@ -37,7 +37,6 @@
   // Активация страницы
   mapPinMain.addEventListener('mousedown', function () {
     disablePage(false);
-    window.map.setMapMainPinCoords();
   });
 
   mapPinMain.addEventListener('keydown', function (evt) {

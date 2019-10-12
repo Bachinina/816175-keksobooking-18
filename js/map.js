@@ -120,12 +120,12 @@
       y: evt.clientY
     };
 
-    var flag = false;
+    var isOnlyMouseClick = true;
 
     var onmapPinMainMousemove = function (moveEvt) {
       moveEvt.preventDefault();
 
-      flag = true;
+      isOnlyMouseClick = false;
 
       var shift = {
         x: startCoords.x - moveEvt.clientX,
@@ -155,14 +155,8 @@
       document.removeEventListener('mousemove', onmapPinMainMousemove);
       document.removeEventListener('mouseup', onmapPinMainMouseup);
 
-      var onmapPinMainClickPreventDefault = function (evtDef) {
-        evtDef.preventDefault();
-        mapPinMain.removeEventListener('click', onmapPinMainClickPreventDefault);
-      };
-
-      if (flag) {
-        onmapPinMainClickPreventDefault();
-        mapPinMain.addEventListener('click', onmapPinMainClickPreventDefault);
+      if (isOnlyMouseClick) {
+        window.map.setMapMainPinCoords();
       }
     };
 
