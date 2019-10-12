@@ -26,7 +26,7 @@
 
 
   // Отрисовка объявления по шаблону
-  var renderAd = function (element) {
+  var renderPin = function (element) {
     var pin = pinTemplate.cloneNode(true);
 
     pin.style.left = element.location.x - pin.offsetWidth / 2 + 'px';
@@ -173,7 +173,7 @@
       var fragment = document.createDocumentFragment();
 
       for (var i = 0; i < arr.length; i++) {
-        fragment.appendChild(renderAd(arr[i]));
+        fragment.appendChild(renderPin(arr[i]));
       }
       return mapPinsBlock.appendChild(fragment);
     },
