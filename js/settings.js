@@ -17,33 +17,35 @@
     window.map.renderPins(response);
   };
 
-  // Деактивация страницы
-  var disablePage = function (boolean) {
-    if (boolean) {
-      map.classList.add('map--faded');
-      adForm.classList.add('ad-form--disabled');
-      // Удаление объявлений и активной карточки
-      window.map.removeActivePins();
-      window.map.removeActiveCard();
-    } else {
-      map.classList.remove('map--faded');
-      adForm.classList.remove('ad-form--disabled');
-    }
+  window.settings = {
+    // Деактивация страницы
+    disablePage: function (boolean) {
+      if (boolean) {
+        map.classList.add('map--faded');
+        adForm.classList.add('ad-form--disabled');
+        // Удаление объявлений и активной карточки
+        window.map.removeActivePins();
+        window.map.removeActiveCard();
+        window.map.setMapMainPinCoords(true);
+      } else {
+        map.classList.remove('map--faded');
+        adForm.classList.remove('ad-form--disabled');
+      }
 
-    window.utils.disableElements(formsFieldsets, boolean);
+      window.utils.disableElements(formsFieldsets, boolean);
+    },
   };
 
   // Активация страницы
   mapPinMain.addEventListener('mousedown', function () {
-    disablePage(false);
+    window.settings.disablePage(false);
     window.backend.xhRequest('GET', URL, onLoad, window.error, null);
-
   });
 
   mapPinMain.addEventListener('keydown', function (evt) {
-    window.utils.isEnterKeyCode(evt, disablePage(false));
+    window.utils.isEnterKeyCode(evt, window.settings.disablePage(false));
   });
 
   // Вызов функции деактивации при загрузке страницы
-  disablePage(true);
+  window.settings.disablePage(true);
 })();

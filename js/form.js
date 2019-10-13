@@ -5,6 +5,7 @@
 (function () {
   // Валидация
   // Соответствие количества комнат количеству гостей
+  var form = document.querySelector('.ad-form');
   var roomNumber = document.querySelector('#room_number');
   var capacity = document.querySelector('#capacity');
 
@@ -115,4 +116,16 @@
 
   timeIn.addEventListener('input', onTimeInAndOutInput);
   timeOut.addEventListener('input', onTimeInAndOutInput);
+
+  // Отправка формы на сервер
+  var onLoad = function () {
+    form.reset();
+    window.settings.disablePage(true);
+    window.success();
+  };
+
+  form.addEventListener('submit', function (evt) {
+    evt.preventDefault();
+    window.backend.xhRequest(form.method, form.action, onLoad, window.error, new FormData(form));
+  });
 })();

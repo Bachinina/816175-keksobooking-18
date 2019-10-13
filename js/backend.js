@@ -3,11 +3,13 @@
 (function () {
   window.backend = {
     xhRequest: function (method, url, onLoad, onError, data) {
+      var SUCCESS_CODE = 200;
+
       var xhr = new XMLHttpRequest();
       xhr.responseType = 'json';
 
       xhr.addEventListener('load', function () {
-        if (xhr.status === 200) {
+        if (xhr.status === SUCCESS_CODE) {
           onLoad(xhr.response);
         } else {
           onError('cтатус ответа - ' + xhr.status + ' ' + xhr.statusText, method, url, onLoad, data);
