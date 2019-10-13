@@ -4,16 +4,18 @@
 
 (function () {
 
-  // Количество объявлений, которое нужно отрисовать
-  var ADS_AMOUNT = 8;
-
-  // Генерация объявлений
-  var ads = window.ads.generateAds(ADS_AMOUNT);
-
   var map = document.querySelector('.map');
   var adForm = document.querySelector('.ad-form');
   var formsFieldsets = document.querySelectorAll('fieldset');
   var mapPinMain = document.querySelector('.map__pin--main');
+
+
+  // Загрузка данных с сервера
+  var URL = 'https://js.dump.academy/keksobooking/data';
+
+  var onLoad = function (response) {
+    window.map.renderPins(response);
+  };
 
   // Деактивация страницы
   var disablePage = function (boolean) {
@@ -26,17 +28,16 @@
     } else {
       map.classList.remove('map--faded');
       adForm.classList.remove('ad-form--disabled');
-      // Отрисовка объявлений после активации страницы
-      window.map.renderPins(ads);
     }
 
     window.utils.disableElements(formsFieldsets, boolean);
   };
 
-
   // Активация страницы
   mapPinMain.addEventListener('mousedown', function () {
     disablePage(false);
+    window.backend.xhRequest('GET', URL, onLoad, window.error, null);
+
   });
 
   mapPinMain.addEventListener('keydown', function (evt) {
