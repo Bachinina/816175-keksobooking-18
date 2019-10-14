@@ -170,9 +170,9 @@
     renderPins: function (arr) {
       var fragment = document.createDocumentFragment();
 
-      for (var i = 0; i < arr.length; i++) {
-        fragment.appendChild(renderPin(arr[i]));
-      }
+      arr.forEach(function (pin) {
+        fragment.appendChild(renderPin(pin));
+      });
       return mapPinsBlock.appendChild(fragment);
     },
 
@@ -201,9 +201,9 @@
 
       // Удаляем пины, начиная со второго, т.к. первый - главный пин для активации страницы
       if (activeAds.length > 1) {
-        for (var i = 1; i < activeAds.length; i++) {
-          mapPinsBlock.removeChild(activeAds[i]);
-        }
+        activeAds.forEach(function (ad) {
+          mapPinsBlock.removeChild(ad);
+        });
       }
     },
 
