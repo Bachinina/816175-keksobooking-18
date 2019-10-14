@@ -201,9 +201,9 @@
 
       // Удаляем пины, начиная со второго, т.к. первый - главный пин для активации страницы
       if (activeAds.length > 1) {
-        activeAds.forEach(function (ad) {
-          mapPinsBlock.removeChild(ad);
-        });
+        for (var i = 1; i < activeAds.length; i++) {
+          mapPinsBlock.removeChild(activeAds[i]);
+        }
       }
     },
 
