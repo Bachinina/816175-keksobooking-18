@@ -15,6 +15,7 @@
 
   var onLoad = function (response) {
     window.map.renderPins(response);
+    window.filter(response);
   };
 
   window.settings = {
@@ -33,7 +34,7 @@
       }
 
       window.utils.disableElements(formsFieldsets, boolean);
-    },
+    }
   };
 
   // Активация страницы

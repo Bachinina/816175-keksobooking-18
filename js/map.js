@@ -3,6 +3,7 @@
 // Работа карты: отрисовка и поведение пинов и карточек
 
 (function () {
+  var NUMBER_OF_PINS = 5;
 
   // Инфо о типе жилья (для отрисовки карточки)
   var typeOfHabitation = {
@@ -168,9 +169,10 @@
   window.map = {
     // Добавление пинов в разметку
     renderPins: function (arr) {
+      window.map.removeActivePins();
       var fragment = document.createDocumentFragment();
 
-      arr.forEach(function (pin) {
+      arr.slice(0, NUMBER_OF_PINS).forEach(function (pin) {
         fragment.appendChild(renderPin(pin));
       });
       return mapPinsBlock.appendChild(fragment);
