@@ -3,8 +3,6 @@
 // Работа карты: отрисовка и поведение пинов и карточек
 
 (function () {
-  // Высота метки главного пина (для правильного вычисления его координат)
-  var HEIGHT_OF_THE_TIP = 22;
 
   // Инфо о типе жилья (для отрисовки карточки)
   var typeOfHabitation = {
@@ -172,9 +170,9 @@
     renderPins: function (arr) {
       var fragment = document.createDocumentFragment();
 
-      for (var i = 0; i < arr.length; i++) {
-        fragment.appendChild(renderPin(arr[i]));
-      }
+      arr.forEach(function (pin) {
+        fragment.appendChild(renderPin(pin));
+      });
       return mapPinsBlock.appendChild(fragment);
     },
 
@@ -221,10 +219,16 @@
     },
 
     // Расчет координат главного пина
-    setMapMainPinCoords: function () {
+    setMapMainPinCoords: function (isDefaultPage) {
+      // Высота метки главного пина
+      var HEIGHT_OF_THE_TIP = 22;
+      if (isDefaultPage) {
+        HEIGHT_OF_THE_TIP = 0;
+      }
+
       var coordX = Math.floor(mapPinMain.offsetLeft + mapPinMain.offsetWidth / 2);
       var coordY = Math.floor(mapPinMain.offsetTop + mapPinMain.offsetHeight + HEIGHT_OF_THE_TIP);
       addressInput.value = coordX + ', ' + coordY;
-    },
+    }
   };
 })();

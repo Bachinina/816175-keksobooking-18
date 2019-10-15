@@ -4,18 +4,35 @@
   window.error = function (error, method, url, onLoad, data) {
     // Шаблон, копирование
     var errorTemplate = document.querySelector('#error').content.querySelector('.error');
-    var errorLayout = errorTemplate.cloneNode(true);
+    var errorBlock = errorTemplate.cloneNode(true);
 
-    // Вывод текста ошибка
-    errorLayout.querySelector('.error__message').textContent = 'Произошла ошибка: ' + error;
+    // Вывод текста ошибки
+    errorBlock.querySelector('.error__message').textContent = 'Произошла ошибка: ' + error;
+
+
+    // Обработчики событий
+    var onErrorBlockEscPress = function (evt) {
+      window.utils.isEscKeyCode(evt, closeErrorBlock);
+    };
+
+    var closeErrorBlock = function () {
+      document.body.removeChild(errorBlock);
+      document.removeEventListener('keydown', onErrorBlockEscPress);
+    };
+
+    document.addEventListener('keydown', onErrorBlockEscPress);
+    errorBlock.addEventListener('click', function () {
+      closeErrorBlock();
+    });
+
 
     // Кнопка повторного запроса серверу
-    var reloadButton = errorLayout.querySelector('.error__button');
+    var reloadButton = errorBlock.querySelector('.error__button');
     reloadButton.addEventListener('click', function () {
-      document.body.removeChild(document.body.querySelector('.error'));
+      closeErrorBlock();
       window.backend.xhRequest(method, url, onLoad, window.error, data);
     });
 
-    document.body.append(errorLayout);
+    document.body.append(errorBlock);
   };
 })();
