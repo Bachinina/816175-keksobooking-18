@@ -3,7 +3,16 @@
 // Работа карты: отрисовка и поведение пинов и карточек
 
 (function () {
+  // Количество пинов на странице
   var NUMBER_OF_PINS = 5;
+
+  // Данные о координатах для вычисления адреса
+  var X_COORDS_MIN = 0;
+  var Y_COORDS_MIN = 130;
+  var Y_COORDS_MAX = 630;
+
+  var map = document.querySelector('.map');
+  var X_COORDS_MAX = map.offsetWidth;
 
   // Инфо о типе жилья (для отрисовки карточки)
   var typeOfHabitation = {
@@ -13,7 +22,6 @@
     palace: 'Дворец'
   };
 
-  var map = document.querySelector('.map');
   var mapPinsBlock = document.querySelector('.map__pins');
   var filterContainer = document.querySelector('.map__filters-container');
 
@@ -139,14 +147,13 @@
       var currentX = mapPinMain.offsetLeft - shift.x;
       var currentY = mapPinMain.offsetTop - shift.y;
 
-      if (currentX >= window.ads.coords.xMin - mapPinMain.offsetWidth / 2 && currentX <= window.ads.coords.xMax - mapPinMain.offsetWidth / 2) {
+      if (currentX >= X_COORDS_MIN - mapPinMain.offsetWidth / 2 && currentX <= X_COORDS_MAX - mapPinMain.offsetWidth / 2) {
         mapPinMain.style.left = currentX + 'px';
       }
-      if (currentY >= window.ads.coords.yMin && currentY <= window.ads.coords.yMax) {
+      if (currentY >= Y_COORDS_MIN && currentY <= Y_COORDS_MAX) {
         mapPinMain.style.top = currentY + 'px';
       }
       window.map.setMapMainPinCoords();
-
     };
 
     var onmapPinMainMouseup = function (upEvt) {
@@ -228,8 +235,8 @@
         HEIGHT_OF_THE_TIP = 0;
       }
 
-      var coordX = Math.floor(mapPinMain.offsetLeft + mapPinMain.offsetWidth / 2);
-      var coordY = Math.floor(mapPinMain.offsetTop + mapPinMain.offsetHeight + HEIGHT_OF_THE_TIP);
+      var coordX = Math.round(mapPinMain.offsetLeft + mapPinMain.offsetWidth / 2);
+      var coordY = Math.round(mapPinMain.offsetTop + mapPinMain.offsetHeight + HEIGHT_OF_THE_TIP);
       addressInput.value = coordX + ', ' + coordY;
     }
   };
