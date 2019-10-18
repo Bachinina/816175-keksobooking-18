@@ -16,6 +16,9 @@
   var onLoad = function (response) {
     window.map.renderPins(response);
     window.filter(response);
+
+    mapPinMain.removeEventListener('mousedown', onMapPinMainMousedown);
+    mapPinMain.removeEventListener('keydown', onMapPinMainMousedown);
   };
 
   window.settings = {
@@ -28,24 +31,30 @@
         window.map.removeActivePins();
         window.map.removeActiveCard();
         window.map.setMapMainPinCoords(true);
+
       } else {
         map.classList.remove('map--faded');
         adForm.classList.remove('ad-form--disabled');
+
       }
 
       window.utils.disableElements(formsFieldsets, boolean);
     }
   };
 
-  // Активация страницы
-  mapPinMain.addEventListener('mousedown', function () {
+  var onMapPinMainMousedown = function () {
     window.settings.disablePage(false);
     window.backend.xhRequest('GET', URL, onLoad, window.error, null);
-  });
+  };
 
-  mapPinMain.addEventListener('keydown', function (evt) {
+  var onMapPinMainKeydown = function (evt) {
     window.utils.isEnterKeyCode(evt, window.settings.disablePage(false));
-  });
+    window.backend.xhRequest('GET', URL, onLoad, window.error, null);
+  };
+
+  // Активация страницы
+  mapPinMain.addEventListener('mousedown', onMapPinMainMousedown);
+  mapPinMain.addEventListener('keydown', onMapPinMainKeydown);
 
   // Вызов функции деактивации при загрузке страницы
   window.settings.disablePage(true);
