@@ -177,6 +177,7 @@
     // Добавление пинов в разметку
     renderPins: function (arr) {
       window.map.removeActivePins();
+      window.map.removeActiveCard();
       var fragment = document.createDocumentFragment();
 
       arr.slice(0, NUMBER_OF_PINS).forEach(function (pin) {
@@ -235,8 +236,8 @@
         HEIGHT_OF_THE_TIP = 0;
       }
 
-      var coordX = Math.round(mapPinMain.offsetLeft + mapPinMain.offsetWidth / 2);
-      var coordY = Math.round(mapPinMain.offsetTop + mapPinMain.offsetHeight + HEIGHT_OF_THE_TIP);
+      var coordX = Math.floor(mapPinMain.offsetLeft + mapPinMain.offsetWidth / 2);
+      var coordY = Math.floor(mapPinMain.offsetTop + mapPinMain.offsetHeight + HEIGHT_OF_THE_TIP);
       addressInput.value = coordX + ', ' + coordY;
     }
   };
