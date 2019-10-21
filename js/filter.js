@@ -1,6 +1,9 @@
 'use strict';
 
 (function () {
+  var LOW_PRICE = 10000;
+  var HIGH_PRICE = 50000;
+
   window.filter = function (data) {
     // Данные, полученные с сервера
     var ads = data.slice();
@@ -32,13 +35,14 @@
     var checkPrice = function (ad, price) {
       if (currentParameters[price] !== 'any') {
         var level;
-        if (ad.offer[price] <= 10000) {
+
+        if (ad.offer[price] <= LOW_PRICE) {
           level = 'low';
         }
-        if (ad.offer[price] >= 50000) {
+        if (ad.offer[price] >= HIGH_PRICE) {
           level = 'high';
         }
-        if (ad.offer[price] >= 10000 && ad.offer.price <= 50000) {
+        if (ad.offer[price] >= LOW_PRICE && ad.offer.price <= HIGH_PRICE) {
           level = 'middle';
         }
         return level === currentParameters[price];

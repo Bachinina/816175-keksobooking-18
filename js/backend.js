@@ -1,12 +1,15 @@
 'use strict';
 
 (function () {
+  var RESPONSE_JSON_TYPE = 'json';
+  var TIMEOUT = 10000;
+
   window.backend = {
     xhRequest: function (method, url, onLoad, onError, data) {
       var SUCCESS_CODE = 200;
 
       var xhr = new XMLHttpRequest();
-      xhr.responseType = 'json';
+      xhr.responseType = RESPONSE_JSON_TYPE;
 
       xhr.addEventListener('load', function () {
         if (xhr.status === SUCCESS_CODE) {
@@ -24,7 +27,7 @@
         onError('запрос не успел выполниться за ' + xhr.timeout + 'мс', method, url, onLoad, data);
       });
 
-      xhr.timeout = 10000;
+      xhr.timeout = TIMEOUT;
       xhr.open(method, url);
       xhr.send(data);
     }
