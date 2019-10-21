@@ -7,7 +7,17 @@
   var map = document.querySelector('.map');
   var adForm = document.querySelector('.ad-form');
   var formsFieldsets = document.querySelectorAll('fieldset');
+
+  // Главный пин и его координаты по умолчанию
   var mapPinMain = document.querySelector('.map__pin--main');
+  var mapPinMainDefaultCoords = {
+    top: 375,
+    left: 570
+  };
+  var setMapPinMainDefaultCoords = function () {
+    mapPinMain.style.top = mapPinMainDefaultCoords.top + 'px';
+    mapPinMain.style.left = mapPinMainDefaultCoords.left + 'px';
+  };
 
 
   // Загрузка данных с сервера
@@ -28,24 +38,29 @@
         window.map.removeActivePins();
         window.map.removeActiveCard();
         window.map.setMapMainPinCoords(true);
+        mapPinMain.addEventListener('mousedown', onMapPinMainMousedown);
+        mapPinMain.addEventListener('keydown', onMapPinMainKeydown);
+        setMapPinMainDefaultCoords();
       } else {
         map.classList.remove('map--faded');
         adForm.classList.remove('ad-form--disabled');
+        mapPinMain.removeEventListener('mousedown', onMapPinMainMousedown);
+        mapPinMain.removeEventListener('keydown', onMapPinMainKeydown);
       }
 
       window.utils.disableElements(formsFieldsets, boolean);
     }
   };
 
-  // Активация страницы
-  mapPinMain.addEventListener('mousedown', function () {
+  var onMapPinMainMousedown = function () {
     window.settings.disablePage(false);
     window.backend.xhRequest('GET', URL, onLoad, window.error, null);
-  });
+  };
 
-  mapPinMain.addEventListener('keydown', function (evt) {
+  var onMapPinMainKeydown = function (evt) {
     window.utils.isEnterKeyCode(evt, window.settings.disablePage(false));
-  });
+    window.backend.xhRequest('GET', URL, onLoad, window.error, null);
+  };
 
   // Вызов функции деактивации при загрузке страницы
   window.settings.disablePage(true);

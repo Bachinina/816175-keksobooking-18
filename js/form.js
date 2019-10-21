@@ -3,11 +3,11 @@
 // Работа формы и валидация
 
 (function () {
-  // Валидация
   // Соответствие количества комнат количеству гостей
   var form = document.querySelector('.ad-form');
   var roomNumber = document.querySelector('#room_number');
   var capacity = document.querySelector('#capacity');
+  var resetButton = document.querySelector('.ad-form__reset');
 
   var accordanceOfRoomsAndGuests = {
     1: ['1'],
@@ -17,10 +17,10 @@
   };
 
   var resetAllValues = function (arr) {
-    for (var i = 0; i < arr.length; i++) {
-      arr[i].removeAttribute('disabled');
-      arr[i].removeAttribute('selected');
-    }
+    arr.forEach(function (element) {
+      element.removeAttribute('disabled');
+      element.removeAttribute('selected');
+    });
   };
 
   var onRoomNumberInput = function (evt) {
@@ -45,6 +45,7 @@
   // Заголовок объявления
   var title = document.querySelector('#title');
   title.addEventListener('invalid', function () {
+    title.style.border = '1px solid red';
     if (title.validity.tooShort) {
       title.setCustomValidity('Слишком короткий заголовок :(');
     } else if (title.validity.tooLong) {
@@ -52,6 +53,7 @@
     } else if (title.validity.valueMissing) {
       title.setCustomValidity('Как же без названия? :(');
     } else {
+      title.style.border = 'none';
       title.setCustomValidity('');
     }
   });
@@ -59,6 +61,7 @@
   // Цена
   var price = document.querySelector('#price');
   price.addEventListener('invalid', function () {
+    price.style.border = '1px solid red';
     if (price.validity.rangeOverflow) {
       price.setCustomValidity('Не жадничай. Дороговато');
     } else if (price.validity.rangeUnderflow) {
@@ -66,6 +69,7 @@
     } else if (price.validity.valueMissing) {
       price.setCustomValidity('Благотворитетельность - это хорошо, но хоть немного денег придётся взять');
     } else {
+      price.style.border = 'none';
       price.setCustomValidity('');
     }
   });
@@ -100,11 +104,9 @@
     var selectedTime = evt.target.value;
 
     var correlateTimeInAndTimeOut = function (arr) {
-      for (var i = 0; i < arr.length; i++) {
-        if (arr[i].value === selectedTime) {
-          arr[i].selected = true;
-        }
-      }
+      arr.forEach(function (el) {
+        el.selected = el.value === selectedTime;
+      });
     };
 
     if (evt.target === timeIn) {
@@ -116,6 +118,13 @@
 
   timeIn.addEventListener('input', onTimeInAndOutInput);
   timeOut.addEventListener('input', onTimeInAndOutInput);
+
+  // Сброс данных
+  resetButton.addEventListener('click', function () {
+    window.settings.disablePage(true);
+    title.style.border = 'none';
+    price.style.border = 'none';
+  });
 
   // Отправка формы на сервер
   var onLoad = function () {
