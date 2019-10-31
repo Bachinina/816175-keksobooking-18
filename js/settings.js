@@ -30,17 +30,19 @@
 
   window.settings = {
     // Деактивация страницы
-    disablePage: function (boolean) {
-      if (boolean) {
+    disablePage: function (flag) {
+      if (flag) {
         map.classList.add('map--faded');
         adForm.classList.add('ad-form--disabled');
         // Удаление объявлений и активной карточки
         window.map.removeActivePins();
         window.map.removeActiveCard();
+        // Установка главного пина в дефолтное состояние
         window.map.setMapMainPinCoords(true);
+        setMapPinMainDefaultCoords();
+        window.form.onRoomNumberInput();
         mapPinMain.addEventListener('mousedown', onMapPinMainMousedown);
         mapPinMain.addEventListener('keydown', onMapPinMainKeydown);
-        setMapPinMainDefaultCoords();
       } else {
         map.classList.remove('map--faded');
         adForm.classList.remove('ad-form--disabled');
@@ -48,7 +50,7 @@
         mapPinMain.removeEventListener('keydown', onMapPinMainKeydown);
       }
 
-      window.utils.disableElements(formsFieldsets, boolean);
+      window.utils.disableElements(formsFieldsets, flag);
     }
   };
 

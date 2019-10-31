@@ -3,6 +3,7 @@
 // Работа формы и валидация
 
 (function () {
+
   // Соответствие количества комнат количеству гостей
   var form = document.querySelector('.ad-form');
   var roomNumber = document.querySelector('#room_number');
@@ -17,30 +18,37 @@
   };
 
   var resetAllValues = function (arr) {
-    arr.forEach(function (element) {
-      element.removeAttribute('disabled');
-      element.removeAttribute('selected');
+    Array.prototype.slice.call(arr).forEach(function (element) {
+      element.disabled = false;
+      element.selected = false;
     });
   };
 
-  var onRoomNumberInput = function (evt) {
-    var selectedvalue = parseInt(evt.target.value, 10);
-    var possibleNumberOfGuests = accordanceOfRoomsAndGuests[selectedvalue];
+  window.form = {
+    onRoomNumberInput: function (evt) {
+      var selectedvalue;
 
-    var capacityValues = capacity.options;
-
-    resetAllValues(capacityValues);
-
-    for (var i = 0; i < capacityValues.length; i++) {
-      if (!possibleNumberOfGuests.includes(capacityValues[i].value)) {
-        capacityValues[i].disabled = 'true';
+      if (evt !== undefined) {
+        selectedvalue = parseInt(evt.target.value, 10);
       } else {
-        capacityValues[i].selected = 'true';
+        selectedvalue = 1;
+      }
+      var possibleNumberOfGuests = accordanceOfRoomsAndGuests[selectedvalue];
+      var capacityValues = capacity.options;
+
+      resetAllValues(capacityValues);
+
+      for (var i = 0; i < capacityValues.length; i++) {
+        if (!possibleNumberOfGuests.includes(capacityValues[i].value)) {
+          capacityValues[i].disabled = 'true';
+        } else {
+          capacityValues[i].selected = 'true';
+        }
       }
     }
   };
 
-  roomNumber.addEventListener('input', onRoomNumberInput);
+  roomNumber.addEventListener('input', window.form.onRoomNumberInput);
 
   // Заголовок объявления
   var title = document.querySelector('#title');
@@ -104,7 +112,7 @@
     var selectedTime = evt.target.value;
 
     var correlateTimeInAndTimeOut = function (arr) {
-      arr.forEach(function (el) {
+      Array.prototype.slice.call(arr).forEach(function (el) {
         el.selected = el.value === selectedTime;
       });
     };
@@ -119,17 +127,36 @@
   timeIn.addEventListener('input', onTimeInAndOutInput);
   timeOut.addEventListener('input', onTimeInAndOutInput);
 
+  // Загрузка аватара
+  var avatarChooser = form.querySelector('.ad-form__field input[type="file"]');
+  var avatar = form.querySelector('.ad-form-header__preview');
+  var defaultAvatar = avatar.querySelector('img').src;
+  window.photoLoading(avatarChooser, avatar, true);
+
+  // Загрузка фото
+  var photoChooser = form.querySelector('.ad-form__upload input[type="file"]');
+  var photo = form.querySelector('.ad-form__photo');
+  window.photoLoading(photoChooser, photo, false);
+
   // Сброс данных
-  resetButton.addEventListener('click', function () {
+  var filter = document.querySelector('.map__filters');
+  var resetAllPageValues = function () {
+    form.reset();
+    filter.reset();
     window.settings.disablePage(true);
     title.style.border = 'none';
     price.style.border = 'none';
+    avatar.querySelector('img').src = defaultAvatar;
+    photo.innerHTML = '';
+  };
+
+  resetButton.addEventListener('click', function () {
+    resetAllPageValues();
   });
 
   // Отправка формы на сервер
   var onLoad = function () {
-    form.reset();
-    window.settings.disablePage(true);
+    resetAllPageValues();
     window.success();
   };
 

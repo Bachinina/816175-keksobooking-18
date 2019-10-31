@@ -33,6 +33,6 @@
       window.backend.xhRequest(method, url, onLoad, window.error, data);
     });
 
-    document.body.append(errorBlock);
+    document.body.querySelector('main').append(errorBlock);
   };
 })();
