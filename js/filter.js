@@ -60,12 +60,7 @@
           count++;
         }
       });
-
-      if (currentFeatures.length === count) {
-        return true;
-      } else {
-        return false;
-      }
+      return currentFeatures.length === count;
     };
 
     var filter = function () {

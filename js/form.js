@@ -52,7 +52,7 @@
 
   // Заголовок объявления
   var title = document.querySelector('#title');
-  title.addEventListener('invalid', function () {
+  title.addEventListener('input', function () {
     title.style.border = '1px solid red';
     if (title.validity.tooShort) {
       title.setCustomValidity('Слишком короткий заголовок :(');
@@ -68,7 +68,7 @@
 
   // Цена
   var price = document.querySelector('#price');
-  price.addEventListener('invalid', function () {
+  price.addEventListener('input', function () {
     price.style.border = '1px solid red';
     if (price.validity.rangeOverflow) {
       price.setCustomValidity('Не жадничай. Дороговато');
@@ -91,6 +91,7 @@
     palace: '10000'
   };
 
+
   var onHousingTypeInput = function (evt) {
     var selectedType = evt.target.value;
     var minPrice = parseInt(accordanceOfHousingTypeAndMinPrice[selectedType], 10);
@@ -105,27 +106,16 @@
   var timeIn = document.querySelector('#timein');
   var timeOut = document.querySelector('#timeout');
 
-  var onTimeInAndOutInput = function (evt) {
-    resetAllValues(timeIn.options);
-    resetAllValues(timeOut.options);
-
-    var selectedTime = evt.target.value;
-
-    var correlateTimeInAndTimeOut = function (arr) {
-      Array.prototype.slice.call(arr).forEach(function (el) {
-        el.selected = el.value === selectedTime;
-      });
-    };
-
-    if (evt.target === timeIn) {
-      correlateTimeInAndTimeOut(timeOut.options);
-    } else {
-      correlateTimeInAndTimeOut(timeIn.options);
-    }
+  var onTimeInInput = function (e) {
+    timeOut.value = e.target.value;
   };
 
-  timeIn.addEventListener('input', onTimeInAndOutInput);
-  timeOut.addEventListener('input', onTimeInAndOutInput);
+  var onTimeOutInput = function (e) {
+    timeIn.value = e.target.value;
+  };
+
+  timeIn.addEventListener('input', onTimeInInput);
+  timeOut.addEventListener('input', onTimeOutInput);
 
   // Загрузка аватара
   var avatarChooser = form.querySelector('.ad-form__field input[type="file"]');
